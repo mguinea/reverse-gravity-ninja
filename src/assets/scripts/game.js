@@ -1,110 +1,110 @@
 // VARIABLES
-var run = true;
-		
-			var loadingTimer = 0;
-			
-			var mainScene=new Scene();
-			var gameScene=new Scene();
-			var 
-			solidWalls = {},
-			gameLoops = 0,
-			frame = 0,
-			GAME_STATE	= {
-				MAIN_PAGE : 0,
-				SELECT_LEVEL : 1,
-				PLAY : 2,
-			},
-			tiles = {
-				background : {
-					x : 0,
-					y : 0,
-				},
-				top_left : {
-					x : 16,
-					y : 0,
-				},
-				top_middle : {
-					x : 24,
-					y : 0,
-				},
-				dead : {
-					x : 40,
-					y : 0,
-				},
-				target : {
-					x : 56,
-					y : 0,
-				}
-			},
-			current_game_state = GAME_STATE.MAIN_PAGE,
-			player 		= new Player(64, 100, 32, 32),
-			gravity 	= 1,
-			blockSize	= 32,
-			spritesheet = new Image(),
-			wall		= [],
-			lava		= [],
-			decoTile	= [],
-			spawn		= {	
-				x : 0,
-				y : 0
-			},
-			target		= [],
-			
-			map0 = [23,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 1, 1, 1, 1, 
-				4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 1, 1, 1, 1, 
-				4, 4, 4, 1, 1, 0, 0, 4, 4, 2, 4, 4, 2, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
-			];
-			
-			map1 = [23,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 1, 1, 1, 1, 
-				4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 1, 1, 1, 1, 
-				4, 4, 4, 1, 1, 0, 0, 4, 4, 0, 4, 4, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 1, 1, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-				4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
-			];
-			
-			map2 = [23,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,				
-				1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-2, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-			];
-			var maps = [map0, map1, map2];
-			var current_map = 0;
+
+
+var loadingTimer = 0;
+
+var mainScene=new Scene();
+var gameScene=new Scene();
+var 
+solidWalls = {},
+gameLoops = 0,
+frame = 0,
+GAME_STATE	= {
+	MAIN_PAGE : 0,
+	SELECT_LEVEL : 1,
+	PLAY : 2,
+},
+tiles = {
+	background : {
+		x : 0,
+		y : 0,
+	},
+	top_left : {
+		x : 16,
+		y : 0,
+	},
+	top_middle : {
+		x : 24,
+		y : 0,
+	},
+	dead : {
+		x : 40,
+		y : 0,
+	},
+	target : {
+		x : 56,
+		y : 0,
+	}
+},
+current_game_state = GAME_STATE.MAIN_PAGE,
+player 		= new Player(64, 100, 29, 32),
+gravity 	= 1,
+blockSize	= 32,
+spritesheet = new Image(),
+wall		= [],
+lava		= [],
+decoTile	= [],
+spawn		= {	
+	x : 0,
+	y : 0
+},
+target		= [],
+
+map0 = [23,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 9, 9, 4, 4, 4, 4, 4, 4, 4, 4, 9, 9, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 
+	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 4, 4, 4, 4, 
+	4, 4, 4, 1, 1, 0, 0, 4, 4, 9, 4, 4, 9, 4, 4, 0, 0, 1, 1, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+];
+
+map1 = [23,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 9, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 1, 1, 1, 1, 
+	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 1, 1, 1, 1, 
+	4, 4, 4, 1, 1, 0, 0, 4, 4, 0, 4, 4, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+];
+
+map2 = [23,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,				
+	1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-2, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+];
+var maps = [map0, map1, map2];
+var current_map = 0;
 
 // SCENES
 
@@ -124,11 +124,10 @@ gameScene.load = function(map){
 	player.x = spawn.x;
 	player.y = spawn.y;
 	player.animation = 0;
-	sprites['skewers'] = new Sprite(24, 0, 8, 8);
+	sprites['skewers'] = new Sprite(16, 0, 8, 8);
 	
-	sprites['grass_1'] = new Sprite(0, 0, 8, 8);
-	sprites['grass_2'] = new Sprite(8, 0, 8, 8);
-	sprites['grass_3'] = new Sprite(16, 0, 8, 8);
+	sprites['grass_2'] = new Sprite(0, 0, 8, 8);
+	sprites['grass_3'] = new Sprite(8, 0, 8, 8);
 	
 	sprites['idle_1'] = new Sprite(0, 8, 8, 8);
 	sprites['idle_2'] = new Sprite(8, 8, 8, 8);
@@ -138,8 +137,17 @@ gameScene.load = function(map){
 	sprites['walk_1'] = new Sprite(24, 8, 8, 8);
 	sprites['walk_2'] = new Sprite(32, 8, 8, 8);
 	sprites['walk_3'] = new Sprite(40, 8, 8, 8);
-	animations['walk'] = new Animation(['walk_1', 'walk_2', 'walk_3', 'walk_2'], 0.2);
-
+	animations['walk'] = new Animation(['walk_1', 'walk_2', 'walk_3', 'walk_2'], 0.15);
+	
+	sprites['lava_1'] = new Sprite(56, 0, 8, 8);
+	sprites['lava_2'] = new Sprite(64, 0, 8, 8);
+	sprites['lava_3'] = new Sprite(72, 0, 8, 8);
+	sprites['lava_4'] = new Sprite(48, 8, 8, 8);
+	sprites['lava_5'] = new Sprite(56, 8, 8, 8);
+	sprites['lava_6'] = new Sprite(64, 8, 8, 8);
+	sprites['lava_7'] = new Sprite(72, 8, 8, 8);
+	animations['lava'] = new Animation(['lava_1', 'lava_2', 'lava_3', 'lava_4', 'lava_5', 'lava_6', 'lava_7'], 0.09);
+	
 	reset_level();
 	
 	// Load sprites
@@ -318,10 +326,6 @@ gameScene.draw = function(){
 		// Draw player
 		ctx.fillStyle = '#0f0';
 		player.draw();
-		
-		// Test
-		ctx.fillText('Frame: ' + frame,150,20);
-		ctx.fillText('gameLoops: ' + gameLoops,150,30);
 	}else{
 		ctx.font = '30pt Calibri';
 		ctx.textAlign='center';
@@ -373,44 +377,45 @@ mainScene.draw=function(){
 
 // OTHER FUNCTIONS
 function setMap(map, blockSize) {
-				var col = 0,
-					row = 0
-					columns = map[0];
-				wall.length = 0;
-				lava.length = 0;
-				for (i = 1, l = map.length; i < l; i += 1) {
-					if (map[i] in solidWalls) { // Solid wall
-						wall.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
-					} 
-					if (map[i] === 4) { // Solid wall
-						decoTile.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
-					} 
-					if (map[i] === 2) { // Dead
-						lava.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
-					} 
-					if (map[i] === -1){ // Spawn
-						spawn.x = col * blockSize;
-						spawn.y = row * blockSize;
-					} 
-					if (map[i] === -2){ // Target
-						target.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
-					}
-					col += 1;
-					if (col >= columns) {
-						row += 1;
-						col = 0;
-					}
-				}
-				worldWidth = columns * blockSize;
-				worldHeight = row * blockSize;
-			}
-			
-			function reset_level(){
-				player.x = spawn.x;
-				player.y = spawn.y;
-				player.vy = 0;
-				player.vx = 0;
-				player.dir = 1;
-				player.state = 0;
-				gravity = 1;
-			}
+	var col = 0,
+		row = 0
+		columns = map[0];
+	wall.length = 0;
+	decoTile.length = 0;
+	lava.length = 0;
+	for (i = 1, l = map.length; i < l; i += 1) {
+		if (map[i] in solidWalls) { // Solid wall
+			wall.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
+		} 
+		if (map[i] === 4) { // Solid wall
+			decoTile.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
+		} 
+		if (map[i] === 2 || map[i] === 9) { // Dead
+			lava.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
+		} 
+		if (map[i] === -1){ // Spawn
+			spawn.x = col * blockSize;
+			spawn.y = row * blockSize;
+		} 
+		if (map[i] === -2){ // Target
+			target.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
+		}
+		col += 1;
+		if (col >= columns) {
+			row += 1;
+			col = 0;
+		}
+	}
+	worldWidth = columns * blockSize;
+	worldHeight = row * blockSize;
+}
+
+function reset_level(){
+	player.x = spawn.x;
+	player.y = spawn.y;
+	player.vy = 0;
+	player.vx = 0;
+	player.dir = 1;
+	player.state = 0;
+	gravity = 1;
+}
