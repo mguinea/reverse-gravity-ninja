@@ -32,6 +32,10 @@ Player.prototype.draw = function(){
 		case 1: // WALK
 			animations['walk'].play(player.x, player.y, blockSize, blockSize, this.dir, gravity);
 		break;
+		case -1: // DEAD
+			//dead
+			animations['dead'].play(player.x, player.y, blockSize, blockSize, this.dir, gravity);
+		break;
 		default:
 			animations['idle'].play(player.x, player.y, blockSize, blockSize, this.dir, gravity);
 		break;

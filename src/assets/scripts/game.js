@@ -2,7 +2,7 @@
 
 
 var loadingTimer = 0;
-
+var deadTimer = 0;
 var mainScene=new Scene();
 var gameScene=new Scene();
 var 
@@ -59,7 +59,7 @@ map0 = [23,
 	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 4, 4, 4, 4, 
 	4, 4, 4, 1, 1, 0, 0, 4, 4, 9, 4, 4, 9, 4, 4, 0, 0, 1, 1, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 0, 0,-7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
@@ -148,6 +148,13 @@ gameScene.load = function(map){
 	sprites['lava_7'] = new Sprite(72, 8, 8, 8);
 	animations['lava'] = new Animation(['lava_1', 'lava_2', 'lava_3', 'lava_4', 'lava_5', 'lava_6', 'lava_7'], 0.09);
 	
+	
+	sprites['e1'] = new Sprite(80, 0, 8, 8);
+	sprites['e2'] = new Sprite(88, 0, 8, 8);
+	sprites['e3'] = new Sprite(80, 8, 8, 8);
+	sprites['e4'] = new Sprite(88, 8, 8, 8);
+	animations['dead'] = new Animation(['e1', 'e2', 'e1', 'e2', 'e3', 'e2', 'e4', 'e3', 'e4'], 2.5);
+	
 	reset_level();
 	
 	// Load sprites
@@ -194,7 +201,17 @@ function input(){
 gameScene.update = function(){
 	++gameLoops;
 	
-	frame = (~~(gameLoops * 0.1) % 4);
+	//frame = (~~(gameLoops * 0.1) % 4);
+	
+	if(player.state == -1){
+		++deadTimer;
+		if(deadTimer > 50){
+			reset_level();
+			player.state = 0;
+			deadTimer = 0;
+		}
+	}
+	
 	if(loadingTimer >= 1){
 		++loadingTimer;
 		ctx.globalAlpha += loadingTimer / 300;
@@ -202,7 +219,7 @@ gameScene.update = function(){
 	if(loadingTimer >= 100){
 		loadingTimer = 0;	
 	}
-	if(loadingTimer == 0){// IF we are not loading a level
+	if(loadingTimer == 0 && player.state != -1){// IF we are not loading a level
 		ctx.globalAlpha = 1;
 		input();
 	}
@@ -261,7 +278,8 @@ gameScene.update = function(){
 	// Player in lava
 	for (i = 0, l = lava.length; i < l; ++i) {
 		if (player.intersects(lava[i])) {
-			reset_level();
+			//reset_level();
+			player.state = -1; // dead
 		}
 	}
 	
