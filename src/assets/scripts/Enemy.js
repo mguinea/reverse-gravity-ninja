@@ -11,6 +11,7 @@ Enemy.prototype.fill = function(){
 }
 
 Enemy.prototype.draw = function(){
+			animations['enemy'].play(this.x, this.y, blockSize, blockSize, this.direction, 1);
 }
 
 Enemy.prototype.intersects = function(rect){

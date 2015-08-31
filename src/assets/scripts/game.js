@@ -1,12 +1,13 @@
 // VARIABLES
 
-var DIR_LEFT = 0, DIR_RIGHT = 1;
+var DIR_LEFT = -1, DIR_RIGHT = 1;
 var loadingTimer = 0;
 var deadTimer = 0;
 var mainScene=new Scene();
 var gameScene=new Scene();
 var 
 enemies = [],
+enemy_walls = [],
 solidWalls = {},
 gameLoops = 0,
 frame = 0,
@@ -60,7 +61,7 @@ map0 = [23,
 	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 4, 4, 4, 4, 
 	4, 4, 4, 1, 1, 0, 0, 4, 4, 9, 4, 4, 9, 4, 4, 0, 0, 1, 1, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 0, 0,-7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4,-8, 0,-7, 0, 0,-8, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
@@ -78,7 +79,7 @@ map1 = [23,
 	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 1, 1, 1, 1, 
 	4, 4, 4, 1, 1, 0, 0, 4, 4, 0, 4, 4, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
-	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4,-8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
@@ -155,6 +156,12 @@ gameScene.load = function(map){
 	sprites['e3'] = new Sprite(80, 8, 8, 8);
 	sprites['e4'] = new Sprite(88, 8, 8, 8);
 	animations['dead'] = new Animation(['e1', 'e2', 'e1', 'e2', 'e3', 'e2', 'e4', 'e3', 'e4'], 2.5);
+	
+	sprites['en1'] = new Sprite(24, 0, 8, 8);
+	sprites['en2'] = new Sprite(32, 0, 8, 8);
+	sprites['en3'] = new Sprite(40, 0, 8, 8);
+	sprites['en4'] = new Sprite(48, 0, 8, 8);
+	animations['enemy'] = new Animation(['en1', 'en2', 'en3', 'en4', 'en3', 'en2'], 0.07);
 	
 	reset_level();
 
@@ -248,11 +255,23 @@ gameScene.update = function(){
 					enemies[i].direction = DIR_LEFT;
 				}
 			}
+			
+			for (j = 0; j < enemy_walls.length; j += 1) {
+				if (enemies[i].intersects(enemy_walls[j])) {
+					enemies[i].direction = DIR_LEFT;
+				}
+			}
 		}
 		if(enemies[i].direction == DIR_LEFT){
 			enemies[i].x -= 1;
 			for (j = 0;j  < wall.length; j += 1) {
 				if (enemies[i].intersects(wall[j])) {
+					enemies[i].direction = DIR_RIGHT;
+				}
+			}
+			
+			for (j = 0; j < enemy_walls.length; j += 1) {
+				if (enemies[i].intersects(enemy_walls[j])) {
 					enemies[i].direction = DIR_RIGHT;
 				}
 			}
@@ -366,7 +385,7 @@ gameScene.draw = function(){
 		
 		// Draw Enemies
 		for (i = 0, l = enemies.length; i < l; i += 1) {
-			enemies[i].fill();
+			enemies[i].draw();
 		}
 		
 		// Draw target
@@ -455,6 +474,10 @@ function setMap(map, blockSize) {
 		if (map[i] === -7){ // Enemy
 			enemies.push(new Enemy(col * blockSize, row * blockSize, blockSize, blockSize));
 		}
+		if (map[i] === -8){ // Enemy walls
+			enemy_walls.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize));
+		}
+		
 		col += 1;
 		if (col >= columns) {
 			row += 1;
