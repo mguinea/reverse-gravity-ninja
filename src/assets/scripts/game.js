@@ -1,11 +1,12 @@
 // VARIABLES
 
-
+var DIR_LEFT = 0, DIR_RIGHT = 1;
 var loadingTimer = 0;
 var deadTimer = 0;
 var mainScene=new Scene();
 var gameScene=new Scene();
 var 
+enemies = [],
 solidWalls = {},
 gameLoops = 0,
 frame = 0,
@@ -156,7 +157,7 @@ gameScene.load = function(map){
 	animations['dead'] = new Animation(['e1', 'e2', 'e1', 'e2', 'e3', 'e2', 'e4', 'e3', 'e4'], 2.5);
 	
 	reset_level();
-	
+
 	// Load sprites
 	//player.sprites.push(new Sprite(0, 0, 130, 180));
 	//player.sprites.push(new Sprite(130, 0, 130, 180));
@@ -238,6 +239,26 @@ gameScene.update = function(){
 		}
 	}
 	
+	// Move Enemies
+	for (i = 0, l = enemies.length; i < l; i += 1) {
+		if(enemies[i].direction == DIR_RIGHT){
+			enemies[i].x += 1;
+			for (j = 0; j < wall.length; j += 1) {
+				if (enemies[i].intersects(wall[j])) {
+					enemies[i].direction = DIR_LEFT;
+				}
+			}
+		}
+		if(enemies[i].direction == DIR_LEFT){
+			enemies[i].x -= 1;
+			for (j = 0;j  < wall.length; j += 1) {
+				if (enemies[i].intersects(wall[j])) {
+					enemies[i].direction = DIR_RIGHT;
+				}
+			}
+		}
+	}
+	
 	// Move player in x
 	player.x += player.vx;
 	for (i = 0, l = wall.length; i < l; i += 1) {
@@ -278,6 +299,14 @@ gameScene.update = function(){
 	// Player in lava
 	for (i = 0, l = lava.length; i < l; ++i) {
 		if (player.intersects(lava[i])) {
+			//reset_level();
+			player.state = -1; // dead
+		}
+	}
+	
+	// Player in enemy
+	for (i = 0, l = enemies.length; i < l; ++i) {
+		if (player.intersects(enemies[i])) {
 			//reset_level();
 			player.state = -1; // dead
 		}
@@ -333,6 +362,11 @@ gameScene.draw = function(){
 		ctx.fillStyle = '#f00';
 		for (i = 0, l = lava.length; i < l; i += 1) {
 			lava[i].draw();
+		}
+		
+		// Draw Enemies
+		for (i = 0, l = enemies.length; i < l; i += 1) {
+			enemies[i].fill();
 		}
 		
 		// Draw target
@@ -417,6 +451,9 @@ function setMap(map, blockSize) {
 		} 
 		if (map[i] === -2){ // Target
 			target.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
+		}
+		if (map[i] === -7){ // Enemy
+			enemies.push(new Enemy(col * blockSize, row * blockSize, blockSize, blockSize));
 		}
 		col += 1;
 		if (col >= columns) {
