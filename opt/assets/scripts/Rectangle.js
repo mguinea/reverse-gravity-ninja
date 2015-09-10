@@ -14,7 +14,7 @@ Rectangle.prototype.draw = function(){
 	var cood;
 	switch(this.type){
 		case -2:
-			coord = sprites['flag'];
+			coord = tiles.target;
 		break;
 		case 1:
 			coord = sprites['grass_2'];

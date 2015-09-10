@@ -1,7 +1,5 @@
 // VARIABLES
-var win = false;
 var aa = new SFX();
-var lastGravity;
 var DIR_LEFT = -1, DIR_RIGHT = 1;
 var loadingTimer = 0;
 var deadTimer = 0;
@@ -55,22 +53,6 @@ spawn		= {
 target		= [],
 
 map0 = [23,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 
-	4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 
-	4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 
-	4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 
-	4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 
-	4, 4,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-2, 4, 4, 
-	4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
-
-];
-
-map1 = [23,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
@@ -79,7 +61,7 @@ map1 = [23,
 	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 4, 4, 4, 4, 
 	4, 4, 4, 1, 1, 0, 0, 4, 4, 9, 4, 4, 9, 4, 4, 0, 0, 1, 1, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4,-8, 0,-7, 0, 0,-8,-8, 0, 0,-7, 0,-8, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4,-8, 0,-7, 0, 0,-8, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
@@ -88,39 +70,42 @@ map1 = [23,
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
 ];
 
-map2 = [23,
+map1 = [23,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 9, 9, 9, 9, 9, 9, 9, 4, 4, 4, 4, 4, 4, 9, 9, 9, 4, 4, 4, 9, 9, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 0, 0, 0, 0, 0,-8,-7, 0, 0, 0, 0,-7, 0, 0, 0, 0,-8, 0, 0, 0, 0, 4, 
-	4,-2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 4, 
-	4, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 9, 9, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 0, 0,-8, 0, 0, 0,-7, 0,-7, 0, 0, 0, 0,-8, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4,-1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 4, 
-	4, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 9, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 1, 1, 1, 1, 
+	4, 4, 4,-1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0,-2, 1, 1, 1, 1, 
+	4, 4, 4, 1, 1, 0, 0, 4, 4, 0, 4, 4, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4,-8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1, 1, 1, 1, 1, 1, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
 ];
 
-map3 = [23,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 9, 9, 9, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4,-1, 0, 0,-8, 0, 0,-7, 0,-8, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 9, 9, 9, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0,-2, 0, 0, 0, 0, 4, 
-	4, 0, 0, 0, 0, 0, 0, 0, 4, 2, 2, 2, 4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 4, 
-	4, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+map2 = [23,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,				
+	1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-2, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ];
-var maps = [map0, map1, map2, map3];
+var maps = [map0, map1, map2];
 var current_map = 0;
 
 // SCENES
@@ -178,8 +163,6 @@ gameScene.load = function(map){
 	sprites['en4'] = new Sprite(48, 0, 8, 8);
 	animations['enemy'] = new Animation(['en1', 'en2', 'en3', 'en4', 'en3', 'en2'], 0.07);
 	
-	sprites['flag'] = new Sprite(16, 0, 8, 8);
-	
 	/*aa.add( 'gravity_change', 10,
 	  [
 		[0,,0.2075,,0.2596,0.4593,,0.1299,,,,,,0.4677,,,,,0.4121,,,0.0524,,0.5]
@@ -201,6 +184,9 @@ gameScene.load = function(map){
 	
 	reset_level();
 
+	// Load sprites
+	//player.sprites.push(new Sprite(0, 0, 130, 180));
+	//player.sprites.push(new Sprite(130, 0, 130, 180));
 	ctx.globalAlpha = 0;
 	++loadingTimer;
 
@@ -229,24 +215,23 @@ function input(){
 	}
 	if(87 in keysDown || 38 in keysDown){ // INPUT UP
 		if(player.onGround){
+			aa.play( 'gravity_change' );
 			gravity = -1;
 		}
 	}
 	if(83 in keysDown || 40 in keysDown){ // INPUT DOWN
 		if(player.onGround){
+			aa.play( 'gravity_change' );
 			gravity = 1;
 		}
 	}
-	
-	if(lastGravity != gravity){
-		aa.play( 'gravity_change' );
-	}
-	
 }
 
 gameScene.update = function(){
 	++gameLoops;
-	lastGravity = gravity;
+	
+	//frame = (~~(gameLoops * 0.1) % 4);
+	
 	if(player.state == -1){
 		++deadTimer;
 		if(deadTimer > 50){
@@ -374,7 +359,7 @@ gameScene.update = function(){
 		if (player.intersects(target[i])) {
 			++current_map;
 			if(current_map >= maps.length){// Si llegamos al tope es que hemos ganado
-				win = true;
+				console.log("Win");
 			}
 			loadScene(gameScene, maps[current_map]);
 		}
@@ -389,64 +374,57 @@ gameScene.draw = function(){
 	ctx.imageSmoothingEnabled = false;
 	ctx.imageSmoothingEnabled = false;
 	ctx.mozImageSmoothingEnabled = false;
-	if(win == true){
+	if(loadingTimer == 0){
+		// Draw Background
+		/*for(i = 0; i < 16; ++i){
+			for(j = 0; j < 12; ++j){
+				ctx.drawImage(spritesheet, tiles.background.x, tiles.background.y, 8, 7,  i * blockSize, j * blockSize, 32, 32);
+			}
+		}*/
+		// Create gradient
+		var grd = ctx.createLinearGradient(0,0,0,canvas.height);
+		grd.addColorStop(0,"#8ED6FF");
+		grd.addColorStop(1,"#004CB3");
+
+		// Fill with gradient
+		ctx.fillStyle=grd;
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		
+		// Draw walls
+		for (i = 0, l = wall.length; i < l; i += 1) {
+			wall[i].draw();
+		}
+		
+		// Draw decoTiles
+		for (i = 0, l = decoTile.length; i < l; i += 1) {
+			decoTile[i].draw();
+		}
+		
+		// Draw lava
+		ctx.fillStyle = '#f00';
+		for (i = 0, l = lava.length; i < l; i += 1) {
+			lava[i].draw();
+		}
+		
+		// Draw Enemies
+		for (i = 0, l = enemies.length; i < l; i += 1) {
+			enemies[i].draw();
+		}
+		
+		// Draw target
+		ctx.fillStyle = '#f0f';
+		for (i = 0, l = target.length; i < l; i += 1) {
+			target[i].draw();
+		}
+		
+		// Draw player
+		ctx.fillStyle = '#0f0';
+		player.draw();
+	}else{
 		ctx.font = '30pt Calibri';
 		ctx.textAlign='center';
 		ctx.fillStyle = '#ecf0f1';
-		ctx.fillText('You Win!', canvas.width / 2,canvas.height / 2);
-	}else{
-		if(loadingTimer == 0){
-			// Draw Background
-			/*for(i = 0; i < 16; ++i){
-				for(j = 0; j < 12; ++j){
-					ctx.drawImage(spritesheet, tiles.background.x, tiles.background.y, 8, 7,  i * blockSize, j * blockSize, 32, 32);
-				}
-			}*/
-			// Create gradient
-			var grd = ctx.createLinearGradient(0,0,0,canvas.height);
-			grd.addColorStop(0,"#8ED6FF");
-			grd.addColorStop(1,"#004CB3");
-
-			// Fill with gradient
-			ctx.fillStyle=grd;
-			ctx.fillRect(0,0,canvas.width,canvas.height);
-			
-			// Draw walls
-			for (i = 0, l = wall.length; i < l; i += 1) {
-				wall[i].draw();
-			}
-			
-			// Draw decoTiles
-			for (i = 0, l = decoTile.length; i < l; i += 1) {
-				decoTile[i].draw();
-			}
-			
-			// Draw lava
-			ctx.fillStyle = '#f00';
-			for (i = 0, l = lava.length; i < l; i += 1) {
-				lava[i].draw();
-			}
-			
-			// Draw Enemies
-			for (i = 0, l = enemies.length; i < l; i += 1) {
-				enemies[i].draw();
-			}
-			
-			// Draw target
-			ctx.fillStyle = '#f0f';
-			for (i = 0, l = target.length; i < l; i += 1) {
-				target[i].draw();
-			}
-			
-			// Draw player
-			ctx.fillStyle = '#0f0';
-			player.draw();
-		}else{
-			ctx.font = '30pt Calibri';
-			ctx.textAlign='center';
-			ctx.fillStyle = '#ecf0f1';
-			ctx.fillText('Level ' + current_map, canvas.width / 2,canvas.height / 2);
-		}
+		ctx.fillText('Level ' + current_map, canvas.width / 2,canvas.height / 2);
 	}
 }
 
@@ -499,8 +477,6 @@ function setMap(map, blockSize) {
 	wall.length = 0;
 	decoTile.length = 0;
 	lava.length = 0;
-	target.length = 0;
-	enemies.length = 0;
 	for (i = 1, l = map.length; i < l; i += 1) {
 		if (map[i] in solidWalls) { // Solid wall
 			wall.push(new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize, map[i]));
